@@ -1,15 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golang-http-deployment
+spec:
+  replicas: 1
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: golang-http-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/proxy-body-size: "8m"
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    # Disable SSL redirect for local development
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
 spec:
   ingressClassName: nginx
+  # No TLS for local development
   rules:
   - host: localhost
     http:
@@ -20,4 +27,4 @@ spec:
           service:
             name: golang-http-service
             port:
-              number: 80
+              number: 80 
